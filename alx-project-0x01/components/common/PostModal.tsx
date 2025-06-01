@@ -1,61 +1,92 @@
-import React, { useState } from 'react';
+import { PostData, PostModalProps } from "@/interfaces";
+import React, { useState } from "react";
 
-interface PostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (newPost: { title: string; body: string }) => void;
-}
+const PostModal: React.FC<PostModalProps> = ({ onClose, onSubmit }) => {
+  const [post, setPost] = useState<PostData>({
+    userId: 1,
+    title: "",
+    body: "",
+  });
 
-const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setPost((prevPost) => ({ ...prevPost, [name]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !body.trim()) return;
-    onSubmit({ title, body });
-    setTitle('');
-    setBody('');
+    onSubmit(post);
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Add New Post</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium">Title</label>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white rounded-lg p-8 shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Post</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="userId"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              User ID
+            </label>
+            <input
+              type="number"
+              id="userId"
+              name="userId"
+              value={post.userId}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="title"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Title
+            </label>
             <input
               type="text"
-              className="w-full border border-gray-300 p-2 rounded"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              id="title"
+              name="title"
+              value={post.title}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter post title"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium">Body</label>
+          <div className="mb-4">
+            <label
+              htmlFor="body"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Body
+            </label>
             <textarea
-              className="w-full border border-gray-300 p-2 rounded"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              required
+              id="body"
+              name="body"
+              value={post.body}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter post content"
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-between items-center">
             <button
               type="button"
-              className="bg-gray-300 hover:bg-gray-400 text-sm px-4 py-2 rounded"
               onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
               Add Post
             </button>
